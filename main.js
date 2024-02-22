@@ -1,4 +1,6 @@
-const { app, BrowserWindow } = require("electron");
+const { app, BrowserWindow, systemPreferences, ipcMain } = require("electron");
+const { exec } = require("child_process");
+
 const path = require("path");
 
 let mainWindow;
@@ -9,6 +11,7 @@ function createWindow() {
     height: 600,
     webPreferences: {
       nodeIntegration: true,
+      contextIsolation: false, // Enable for added security if possible
     },
   });
 
@@ -23,4 +26,40 @@ app.on("window-all-closed", () => {
 
 app.on("activate", () => {
   if (mainWindow === null) createWindow();
+});
+
+systemPreferences.subscribeNotification(
+  "AppleInterfaceThemeChangedNotification",
+  () => {
+    const mode = systemPreferences.getEffectiveAppearance();
+    mainWindow.webContents.send("dark-mode-changed", mode);
+  }
+);
+
+function getFrontmostApp() {
+  const applescript = `
+    tell application "System Events"
+      set frontApp to name of first process whose frontmost is true
+    end tell
+  `;
+
+  exec(`osascript -e '${applescript}'`, (error, stdout, stderr) => {
+    if (error || stderr) {
+      console.error("Error getting frontmost app:", error || stderr);
+    } else {
+      console.log("Frontmost App:", stdout.trim());
+      mainWindow.webContents.send("frontmost-app-changed", stdout.trim());
+    }
+  });
+}
+
+// Initial State
+getFrontmostApp();
+
+// Continuous Polling
+setInterval(getFrontmostApp, 2000); // Check every 2 seconds (adjust interval)
+
+// IPC Listener for Dark Mode Update
+ipcMain.handle("get-darkmode", () => {
+  return systemPreferences.getEffectiveAppearance();
 });
