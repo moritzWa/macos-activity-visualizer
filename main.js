@@ -28,14 +28,7 @@ app.on("activate", () => {
   if (mainWindow === null) createWindow();
 });
 
-systemPreferences.subscribeNotification(
-  "AppleInterfaceThemeChangedNotification",
-  () => {
-    const mode = systemPreferences.getEffectiveAppearance();
-    mainWindow.webContents.send("dark-mode-changed", mode);
-  }
-);
-
+// tracking
 function getFrontmostApp() {
   const applescript = `
     tell application "System Events"
@@ -52,13 +45,19 @@ function getFrontmostApp() {
     }
   });
 }
-
 // Initial State
 getFrontmostApp();
-
 // Continuous Polling
 setInterval(getFrontmostApp, 2000); // Check every 2 seconds (adjust interval)
 
+// theme
+systemPreferences.subscribeNotification(
+  "AppleInterfaceThemeChangedNotification",
+  () => {
+    const mode = systemPreferences.getEffectiveAppearance();
+    mainWindow.webContents.send("dark-mode-changed", mode);
+  }
+);
 // IPC Listener for Dark Mode Update
 ipcMain.handle("get-darkmode", () => {
   return systemPreferences.getEffectiveAppearance();

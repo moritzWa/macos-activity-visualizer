@@ -1,8 +1,9 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 const { ipcRenderer } = window.require("electron");
 
 export const App = () => {
   console.log("test");
+  const [theme, setTheme] = useState("light");
 
   interface AppEvent {
     app: string;
@@ -13,11 +14,16 @@ export const App = () => {
   }
 
   useEffect(() => {
+    // frontmost app
     ipcRenderer.on("frontmost-app-changed", (event: AppEvent, app) => {
       console.log("Frontmost App Changed:", app);
       // Update your react state based on 'app'
     });
 
+    // theme
+    ipcRenderer.invoke("get-darkmode").then((mode: "dark" | "light") => {
+      setTheme(mode);
+    });
     ipcRenderer.on(
       "dark-mode-changed",
       (event: AppEvent, mode: "dark" | "light") => {
