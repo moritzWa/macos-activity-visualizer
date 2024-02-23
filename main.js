@@ -1,6 +1,5 @@
 const { app, BrowserWindow, systemPreferences, ipcMain } = require("electron");
-const { exec } = require("child_process");
-
+const activeWin = require("active-win");
 const path = require("path");
 
 let mainWindow;
@@ -11,7 +10,7 @@ function createWindow() {
     height: 600,
     webPreferences: {
       nodeIntegration: true,
-      contextIsolation: false, // Enable for added security if possible
+      contextIsolation: false,
     },
   });
 
@@ -28,29 +27,58 @@ app.on("activate", () => {
   if (mainWindow === null) createWindow();
 });
 
-// tracking
-function getFrontmostApp() {
-  const applescript = `
-    tell application "System Events"
-      set frontApp to name of first process whose frontmost is true
-    end tell
-  `;
+async function initializeApp() {
+  const hasPermission = await systemPreferences.isTrustedAccessibilityClient(
+    false
+  );
+  console.log("Permission Status:", hasPermission);
 
-  exec(`osascript -e '${applescript}'`, (error, stdout, stderr) => {
-    if (error || stderr) {
-      console.error("Error getting frontmost app:", error || stderr);
-    } else {
-      console.log("Frontmost App:", stdout.trim());
-      mainWindow.webContents.send("frontmost-app-changed", stdout.trim());
+  if (!hasPermission) {
+    const didRequestPermission =
+      await systemPreferences.isTrustedAccessibilityClient(true);
+    if (!didRequestPermission) {
+      console.log("Please grant Accessibility permissions in System Settings");
+      mainWindow.webContents.send("permissions-needed");
     }
-  });
+    mainWindow.webContents.send("permissions-needed");
+  } else {
+    console.log("Starting active window tracking");
+    startActiveWindowTracking();
+  }
 }
-// Initial State
-getFrontmostApp();
-// Continuous Polling
-setInterval(getFrontmostApp, 2000); // Check every 2 seconds (adjust interval)
 
-// theme
+function startActiveWindowTracking() {
+  setInterval(async () => {
+    try {
+      const windowData = await activeWin();
+      mainWindow.webContents.send("frontmost-app-changed", {
+        app: windowData.owner.name,
+        isChrome: windowData.owner.name === "Google Chrome",
+        websiteTitle: windowData.title,
+        websiteUrl: windowData.url,
+      });
+    } catch (error) {
+      console.error("Error getting active window:", error);
+    }
+  }, 2000);
+}
+
+ipcMain.handle("recheck-permissions", async () => {
+  const hasPermission = await systemPreferences.isTrustedAccessibilityClient(
+    false
+  );
+  if (hasPermission) {
+    startActiveWindowTracking();
+    mainWindow.webContents.send("permissions-granted");
+  }
+});
+
+app.whenReady().then(() => {
+  createWindow();
+  initializeApp(); // Call initializeApp after creating the window
+});
+
+// Theme
 systemPreferences.subscribeNotification(
   "AppleInterfaceThemeChangedNotification",
   () => {
@@ -58,6 +86,7 @@ systemPreferences.subscribeNotification(
     mainWindow.webContents.send("dark-mode-changed", mode);
   }
 );
+
 // IPC Listener for Dark Mode Update
 ipcMain.handle("get-darkmode", () => {
   return systemPreferences.getEffectiveAppearance();

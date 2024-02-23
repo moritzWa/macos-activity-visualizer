@@ -4,6 +4,7 @@ const { ipcRenderer } = window.require("electron");
 export const App = () => {
   console.log("test");
   const [theme, setTheme] = useState("light");
+  const [permissionsStatus, setPermissionsStatus] = useState("unknown");
 
   interface AppEvent {
     app: string;
@@ -14,27 +15,34 @@ export const App = () => {
   }
 
   useEffect(() => {
-    // frontmost app
-    ipcRenderer.on("frontmost-app-changed", (event: AppEvent, app) => {
-      console.log("Frontmost App Changed:", app);
-      // Update your react state based on 'app'
+    ipcRenderer.on("permissions-needed", () => {
+      console.log("Permissions needed event received"); // Add logging
+      setPermissionsStatus("denied");
+    });
+
+    ipcRenderer.on("permissions-granted", () => {
+      console.log("Permissions granted event received"); // Add logging
+      setPermissionsStatus("granted");
+    });
+
+    ipcRenderer.on("frontmost-app-changed", (appData: AppEvent) => {
+      console.log(
+        "Frontmost App Changed (React):",
+        JSON.stringify(appData, null, 2)
+      );
     });
 
     // theme
     ipcRenderer.invoke("get-darkmode").then((mode: "dark" | "light") => {
       setTheme(mode);
     });
-    ipcRenderer.on(
-      "dark-mode-changed",
-      (event: AppEvent, mode: "dark" | "light") => {
-        console.log("Dark Mode Changed:", mode);
-        // Update state for dark mode based on 'mode'
-      }
-    );
+    ipcRenderer.on("dark-mode-changed", (mode: "dark" | "light") => {
+      console.log("Dark Mode Changed:", mode);
+      // Update state for dark mode based on 'mode'
+    });
   }, []);
 
   //   const darkmode = systemPreferences.getEffectiveAppearance();
-  const darkmode = "wip";
 
-  return <h1>Hello Electron TypeScript React App! {darkmode}</h1>;
+  return <h1>Hello Electron TypeScript React App! {theme}</h1>;
 };
