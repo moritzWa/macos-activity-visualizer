@@ -9,5 +9,11 @@
     "target": ["dmg"],
     "category": "public.app-category.productivity"
   },
-  "icon": "assets/icon.png"
+  "icon": "assets/icon.png",
+  "extraFiles": [
+    {
+      "from": "logs",
+      "to": "logs"
+    }
+  ]
 }

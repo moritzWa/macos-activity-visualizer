@@ -80,6 +80,7 @@
     "dot-case": "^3.0.4",
     "eastasianwidth": "^0.2.0",
     "ee-first": "^1.1.1",
+    "electron-log": "^5.1.1",
     "electron-to-chromium": "^1.4.679",
     "emoji-regex": "^9.2.2",
     "encodeurl": "^1.0.2",
