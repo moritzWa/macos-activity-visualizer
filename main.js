@@ -39,10 +39,14 @@ async function initializeApp() {
     if (!didRequestPermission) {
       console.log("Please grant Accessibility permissions in System Settings");
       mainWindow.webContents.send("permissions-needed");
+    } else {
+      // Key Change: Add a state variable or flag to track if you've already requested permissions
+      mainWindow.webContents.send("permissions-requested"); // Inform the frontend the request is pending
     }
   } else {
     console.log("Starting active window tracking");
     startActiveWindowTracking();
+    mainWindow.webContents.send("permissions-granted"); // Send this only if permissions are initially granted
   }
 }
 
@@ -74,7 +78,7 @@ ipcMain.handle("recheck-permissions", async () => {
 
 app.whenReady().then(() => {
   createWindow();
-  initializeApp(); // Call initializeApp after creating the window
+  initializeApp();
 
   // logging
   log.transports.file.level = "info"; // Set log level ('debug', 'info', 'warn', 'error')
@@ -82,10 +86,10 @@ app.whenReady().then(() => {
     path.join(app.getPath("userData"), "logs/main.log");
 
   // Logging Configuration
-  log.transports.file.level = "debug"; // Maximum verbosity
+  log.transports.file.level = "debug";
   log.transports.file.resolvePath = () => {
     const logPath = path.join(app.getPath("userData"), "logs/main.log");
-    console.log("Trying to create log file at:", logPath); // Check this path!
+    console.log("Trying to create log file at:", logPath);
     return logPath;
   };
 

@@ -44,5 +44,10 @@ export const App = () => {
 
   //   const darkmode = systemPreferences.getEffectiveAppearance();
 
-  return <h1>Hello Electron TypeScript React App! {theme}</h1>;
+  return (
+    <div>
+      <h1>Hello Electron TypeScript React App! {theme}</h1>
+      <h2>Permissions Status: {permissionsStatus}</h2>
+    </div>
+  );
 };
