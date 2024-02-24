@@ -31,11 +31,14 @@ async function initializeApp() {
   const hasPermission = await systemPreferences.isTrustedAccessibilityClient(
     false
   );
+  console.log("Initial Permission Status:", hasPermission);
   permissionsGranted = hasPermission;
 
   if (!hasPermission) {
     const didRequestPermission =
       await systemPreferences.isTrustedAccessibilityClient(true);
+    console.log("Did Request Permission:", didRequestPermission);
+
     if (!didRequestPermission) {
       mainWindow.webContents.send("permissions-needed");
     } else {

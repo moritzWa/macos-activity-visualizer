@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from "react";
 const { ipcRenderer } = window.require("electron");
 
+interface AppEvent {
+  app: string;
+  icon?: string;
+  isChrome?: boolean;
+  websiteTitle?: string;
+  websiteUrl?: string;
+}
 export const App = () => {
   const [theme, setTheme] = useState("light");
   const [permissionsStatus, setPermissionsStatus] = useState("unknown");
-
-  interface AppEvent {
-    app: string;
-    icon?: string;
-    isChrome?: boolean;
-    websiteTitle?: string;
-    websiteUrl?: string;
-  }
+  const [activeApp, setActiveApp] = useState<AppEvent>({} as AppEvent);
 
   useEffect(() => {
     ipcRenderer.on("permissions-needed", () => {
@@ -27,10 +27,7 @@ export const App = () => {
     });
 
     ipcRenderer.on("frontmost-app-changed", (appData: AppEvent) => {
-      console.log(
-        "Frontmost App Changed (React):",
-        JSON.stringify(appData, null, 2)
-      );
+      setActiveApp(appData);
     });
 
     ipcRenderer.invoke("get-darkmode").then((mode: "dark" | "light") => {
@@ -56,6 +53,14 @@ export const App = () => {
       )}
       {permissionsStatus !== "granted" && (
         <button onClick={handleRecheckPermissions}>Recheck Permissions</button>
+      )}
+      {activeApp && (
+        <div>
+          <h3>Active App: {activeApp.app}</h3>
+          {activeApp.websiteTitle && <h4>Title: {activeApp.websiteTitle}</h4>}
+          {activeApp.websiteUrl && <h4>URL: {activeApp.websiteUrl}</h4>}
+          {/* {activeApp.icon && <img src={activeApp.icon} />} */}
+        </div>
       )}
     </div>
   );
