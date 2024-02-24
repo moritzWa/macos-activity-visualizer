@@ -1,0 +1,13 @@
+{
+  "productName": "macOS Activity Visualizer",
+  "appId": "com.moritzW42.macosactivityvisualizer",
+  "directories": {
+    "output": "release"
+  },
+  "files": ["dist/**/*", "main.js", "package.json"],
+  "mac": {
+    "target": ["dmg"],
+    "category": "public.app-category.productivity"
+  },
+  "icon": "assets/icon.png"
+}

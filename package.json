@@ -1,7 +1,7 @@
 {
   "name": "macos-activity-visualizer",
   "version": "1.0.0",
-  "description": "",
+  "description": "App that visualizes the macOS Activity Monitor to help you focus on valuable apps.",
   "main": "main.js",
   "dependencies": {
     "@types/react": "^18.2.57",
@@ -80,7 +80,6 @@
     "dot-case": "^3.0.4",
     "eastasianwidth": "^0.2.0",
     "ee-first": "^1.1.1",
-    "electron": "^29.0.1",
     "electron-to-chromium": "^1.4.679",
     "emoji-regex": "^9.2.2",
     "encodeurl": "^1.0.2",
@@ -345,7 +344,8 @@
   "scripts": {
     "start": "webpack-dev-server --mode development",
     "build": "webpack --mode production",
-    "electron-start": "electron ."
+    "electron-start": "electron .",
+    "dist": "electron-builder"
   },
   "keywords": [],
   "author": "",
@@ -353,6 +353,8 @@
   "devDependencies": {
     "@types/webpack": "^5.28.5",
     "@types/webpack-dev-server": "^4.7.2",
+    "electron": "^29.0.1",
+    "electron-builder": "^24.12.0",
     "html-webpack-plugin": "^5.6.0",
     "ts-loader": "^9.5.1",
     "webpack": "^5.90.3",
