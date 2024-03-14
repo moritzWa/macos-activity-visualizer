@@ -6,3 +6,22 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+html {
+  height: 100%;
+}
+
+body {
+  height: 100vh;
+}
+
+#app {
+  height: 100%;
+}
+
+.dark {
+  background-color: #232329;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+}

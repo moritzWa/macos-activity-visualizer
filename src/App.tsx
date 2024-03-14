@@ -10,6 +10,9 @@ interface EthiDbResult {
   sessionId: number;
   title: string;
   url: string;
+
+  end: string; // format: YYYY-MM-DD HH:mm:ss
+  start: string; // format: YYYY-MM-DD HH:mm:ss
 }
 
 export const App = () => {
@@ -60,17 +63,21 @@ export const App = () => {
       (row.url ? row.url.trim() : "") !== ""
   );
 
+  console.log("rowsWithoutNoTitleNoUrlItems", rowsWithoutNoTitleNoUrlItems);
+
   return (
-    <div className={`${theme === "dark" ? "dark" : ""}`}>
-      <div className="dark:bg-dark-bg dark:text-dark-text p-4">
+    <div className={`${theme === "dark" ? "dark" : ""} h-full`}>
+      <div className="dark:bg-dark-bg h-auto dark:text-dark-text p-4">
         <h1 className="text-3xl font-bold mb-4 ">
           Hello Electron TypeScript React App! {theme}
         </h1>
         <div>Selected Date: {moment(selectedDate).format("MM-DD")}</div>
-        <button onClick={handlePreviousDay}>Previous Day</button>
-        <button onClick={handleNextDay}>Next Day</button>
+        <div className="flex flex-row  gap-4 py-4">
+          <button onClick={handlePreviousDay}>Previous Day</button>
+          <button onClick={handleNextDay}>Next Day</button>
+        </div>
         {ethiData.length > 0 ? (
-          <ul className="list-disc list-inside ">
+          <ul className="list-disc list-inside">
             {rowsWithoutNoTitleNoUrlItems.map((row) => (
               <li key={row.id}>
                 {row.title == "" ? row.url : row.title} - {row.sessionId}
