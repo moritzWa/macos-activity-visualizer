@@ -1,10 +1,7 @@
 const { app, BrowserWindow, systemPreferences, ipcMain } = require("electron");
-const activeWin = require("active-win");
 const path = require("path");
-const log = require("electron-log");
 
 let mainWindow;
-let permissionsGranted = false;
 
 function createWindow() {
   mainWindow = new BrowserWindow({
