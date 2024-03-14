@@ -1,5 +1,6 @@
 import moment from "moment";
 import React, { useEffect, useState } from "react";
+import "./styles.css";
 const { ipcRenderer } = window.require("electron");
 
 interface EthiDbResult {
@@ -60,22 +61,26 @@ export const App = () => {
   );
 
   return (
-    <div>
-      <h1>Hello Electron TypeScript React App! {theme}</h1>
-      <div>Selected Date: {moment(selectedDate).format("MM-DD")}</div>
-      <button onClick={handlePreviousDay}>Previous Day</button>
-      <button onClick={handleNextDay}>Next Day</button>
-      {ethiData.length > 0 ? (
-        <ul>
-          {rowsWithoutNoTitleNoUrlItems.map((row) => (
-            <li key={row.id}>
-              {row.title == "" ? row.url : row.title} - {row.sessionId}
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p>No data yet...</p>
-      )}
+    <div className={`container mx-auto p-4 ${theme === "dark" ? "dark" : ""}`}>
+      <div className="dark:bg-dark-bg">
+        <h1 className="text-3xl font-bold mb-4 dark:text-dark-text text-green-300">
+          Hello Electron TypeScript React App! {theme}
+        </h1>
+        <div>Selected Date: {moment(selectedDate).format("MM-DD")}</div>
+        <button onClick={handlePreviousDay}>Previous Day</button>
+        <button onClick={handleNextDay}>Next Day</button>
+        {ethiData.length > 0 ? (
+          <ul className="list-disc list-inside ">
+            {rowsWithoutNoTitleNoUrlItems.map((row) => (
+              <li key={row.id}>
+                {row.title == "" ? row.url : row.title} - {row.sessionId}
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p>No data yet...</p>
+        )}
+      </div>
     </div>
   );
 };
