@@ -1,5 +1,7 @@
 import moment from "moment";
 import React, { useEffect, useState } from "react";
+import { Tooltip } from "react-tooltip";
+import "react-tooltip/dist/react-tooltip.css";
 import "./styles.css";
 const { ipcRenderer } = window.require("electron");
 
@@ -67,6 +69,8 @@ export const App = () => {
 
   return (
     <div className={`${theme === "dark" ? "dark" : ""} h-full`}>
+      <Tooltip id="my-tooltip" />
+
       <div className="dark:bg-dark-bg h-auto dark:text-dark-text p-4">
         <h1 className="text-3xl font-bold mb-4 ">
           Hello Electron TypeScript React App! {theme}
@@ -76,7 +80,26 @@ export const App = () => {
           <button onClick={handlePreviousDay}>Previous Day</button>
           <button onClick={handleNextDay}>Next Day</button>
         </div>
-        {ethiData.length > 0 ? (
+
+        {Array.apply(null, Array(24)).map((hourOfDay, i) => (
+          <div className="h-28 border-t flex">
+            <div className="pt-1 pr-3 w-14 flex justify-end">{i}:00</div>
+            <div className="grid flex-col w-full">
+              {Array.apply(null, Array(4)).map((fifteenMinutes) => (
+                <div
+                  data-tooltip-id="my-tooltip"
+                  data-tooltip-content={
+                    "replace this with list of full/detailed entries data in that 15m interval"
+                  }
+                >
+                  15 mins increment - replace this with the favicons
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
+
+        {/* {ethiData.length > 0 ? (
           <ul className="list-disc list-inside">
             {rowsWithoutNoTitleNoUrlItems.map((row) => (
               <li key={row.id}>
@@ -86,7 +109,7 @@ export const App = () => {
           </ul>
         ) : (
           <p>No data yet...</p>
-        )}
+        )} */}
       </div>
     </div>
   );
