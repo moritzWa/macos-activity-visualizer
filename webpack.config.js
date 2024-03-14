@@ -1,4 +1,5 @@
 const path = require("path");
+const webpack = require("webpack"); // Add this line
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 
 module.exports = {
@@ -19,9 +20,13 @@ module.exports = {
     filename: "bundle.js",
     path: path.resolve(__dirname, "dist"),
   },
+  devServer: {
+    hot: true,
+  },
   plugins: [
     new HtmlWebpackPlugin({
       template: "./src/index.html",
     }),
+    new webpack.HotModuleReplacementPlugin(),
   ],
 };

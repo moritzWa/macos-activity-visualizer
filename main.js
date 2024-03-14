@@ -14,12 +14,21 @@ function createWindow() {
     },
   });
 
-  mainWindow.loadFile(path.join(__dirname, "dist/index.html"));
+  // mainWindow.loadFile(path.join(__dirname, "dist/index.html"));
+  mainWindow.loadURL("http://localhost:8080");
 }
+
+app.whenReady().then(() => {
+  console.log("App is ready, calling createWindow");
+  createWindow();
+});
+
 app.on("window-all-closed", () => {
   if (process.platform !== "darwin") app.quit();
 });
+
 app.on("activate", () => {
+  console.log("on activate, mainWindow:", mainWindow);
   if (mainWindow === null) createWindow();
 });
 
