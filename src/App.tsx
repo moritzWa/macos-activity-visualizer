@@ -12,6 +12,7 @@ interface EthiDbResult {
 
 export const App = () => {
   const [theme, setTheme] = useState("light");
+  const [ethiData, setEthiData] = useState<EthiDbResult[]>([]);
 
   useEffect(() => {
     // dark mode
@@ -31,6 +32,7 @@ export const App = () => {
         // Type annotation here
         console.log("Ethi DB Results:", results);
         // Use the results to update component state
+        setEthiData(results);
       })
       .catch((error: Error) => {
         // Type annotation for error
@@ -41,7 +43,17 @@ export const App = () => {
   return (
     <div>
       <h1>Hello Electron TypeScript React App! {theme}</h1>
-      test
+      {ethiData.length > 0 ? (
+        <ul>
+          {ethiData.map((row) => (
+            <li key={row.id}>
+              {row.title} - {row.sessionId}
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p>No data yet...</p>
+      )}
     </div>
   );
 };
