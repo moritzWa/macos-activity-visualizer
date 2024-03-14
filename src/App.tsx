@@ -61,9 +61,9 @@ export const App = () => {
   );
 
   return (
-    <div className={`container mx-auto p-4 ${theme === "dark" ? "dark" : ""}`}>
-      <div className="dark:bg-dark-bg">
-        <h1 className="text-3xl font-bold mb-4 dark:text-dark-text text-green-300">
+    <div className={`${theme === "dark" ? "dark" : ""}`}>
+      <div className="dark:bg-dark-bg dark:text-dark-text p-4">
+        <h1 className="text-3xl font-bold mb-4 ">
           Hello Electron TypeScript React App! {theme}
         </h1>
         <div>Selected Date: {moment(selectedDate).format("MM-DD")}</div>
