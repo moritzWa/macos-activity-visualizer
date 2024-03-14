@@ -1,6 +1,7 @@
 const { app, BrowserWindow, systemPreferences, ipcMain } = require("electron");
 // const path = require("path");
 const sqlite3 = require("sqlite3").verbose();
+const moment = require("moment");
 
 let mainWindow;
 
@@ -60,13 +61,21 @@ function connectToEthiDb() {
 }
 
 // IPC Handler for database queries
-ipcMain.handle("query-ethi-db", async (event, query) => {
+ipcMain.handle("query-ethi-db", async (event, selectedDate) => {
   if (!ethiDb) {
     connectToEthiDb();
   }
 
+  const today = moment().startOf("day"); // Get today's date at midnight
+  const queryDate = moment(selectedDate || today);
+  const startDate = queryDate.format("YYYY-MM-DD HH:mm:ss");
+  const endDate = queryDate.endOf("day").format("YYYY-MM-DD HH:mm:ss");
+
+  // Build the parameterized SQL query for filtering by date range
+  const query = `SELECT * FROM Activities WHERE start >= ? AND end <= ?`;
+
   return new Promise((resolve, reject) => {
-    ethiDb.all(query, (err, rows) => {
+    ethiDb.all(query, [startDate, endDate], (err, rows) => {
       if (err) {
         reject(err);
       } else {
