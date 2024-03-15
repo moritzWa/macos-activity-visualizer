@@ -45,7 +45,12 @@ export const App = () => {
         const filteredResults = results.filter(
           (row) =>
             (row.title ? row.title.trim() : "") !== "" &&
-            (row.url ? row.url.trim() : "") !== ""
+            (row.url ? row.url.trim() : "") !== "" &&
+            row.url !== "chrome://newtab/" &&
+            row.url !==
+              "chrome-extension://chphlpgkkbolifaimnlloiipkdnihall/onetab.html" &&
+            row.url !==
+              "chrome-extension://pfglnpdpgmecffbejlfgpnebopinlclj/html/options.html"
         );
 
         setEthiData(filteredResults);
@@ -53,6 +58,7 @@ export const App = () => {
         const uniqueUrls = Array.from(
           new Set(filteredResults.map((result) => getRootOfURL(result.url)))
         ).filter((url) => url !== "");
+
         const favicons = uniqueUrls.map((url) => ({
           url,
           favicon: getFaviconURL(url),
@@ -102,12 +108,17 @@ export const App = () => {
                 const end = moment(start)
                   .add(15, "minutes")
                   .format("YYYY-MM-DD HH:mm:ss");
-                const dataInThisSlot = ethiData.filter(
-                  (data) => data.start >= start && data.end <= end
-                );
+                const dataInThisSlot = ethiData
+                  .filter((data) => {
+                    return data.start >= start && data.end <= end;
+                  })
+                  .filter(
+                    (v, i, a) => a.findIndex((t) => t.title === v.title) === i
+                  );
                 const faviconsInThisSlot = faviconData.filter((data) =>
                   dataInThisSlot.some((d) => getRootOfURL(d.url) === data.url)
                 );
+
                 return (
                   <Tooltip.Provider>
                     <Tooltip.Root>
@@ -124,7 +135,11 @@ export const App = () => {
                       </Tooltip.Trigger>
                       <Tooltip.Portal>
                         <Tooltip.Content
-                          className="bg-white p-4 text-xs dark:bg-dark-bg h-overflow-auto"
+                          className={`p-4 text-xs overflow-auto max-h-96 ${
+                            theme === "dark"
+                              ? "bg-dark-bg-secondary text-dark-text-secondary"
+                              : "bg-white text-black"
+                          }`}
                           sideOffset={5}
                         >
                           <ol>

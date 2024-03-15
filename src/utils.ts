@@ -1,6 +1,8 @@
 export function getFaviconURL(url: string): string {
-  const root = getRootOfURL(url);
-  return getFaviconUrlFromDuckDuckGo(root);
+  const root = getRootOfURL(`https://${url}`);
+  const faviconUrl = getFaviconUrlFromDuckDuckGo(root);
+
+  return faviconUrl;
 }
 
 export function getRootOfURL(url: string): string {
