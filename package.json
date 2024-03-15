@@ -4,6 +4,7 @@
   "description": "App that visualizes the macOS Activity Monitor to help you focus on valuable apps.",
   "main": "main.js",
   "dependencies": {
+    "@radix-ui/react-tooltip": "^1.0.7",
     "@types/react": "^18.2.57",
     "@types/react-dom": "^18.2.19",
     "accepts": "^1.3.8",
@@ -252,7 +253,6 @@
     "raw-body": "^2.5.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-tooltip": "^5.26.3",
     "readable-stream": "^3.6.2",
     "readdirp": "^3.6.0",
     "rechoir": "^0.8.0",
