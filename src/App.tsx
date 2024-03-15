@@ -29,12 +29,14 @@ export const App = () => {
   );
 
   const handleNextDay = () => {
-    setSelectedDate(moment(selectedDate).add(1, "day").format("YYYY-MM-DD"));
+    setSelectedDate(
+      moment.utc(selectedDate).add(1, "day").format("YYYY-MM-DD")
+    );
   };
 
   const handlePreviousDay = () => {
     setSelectedDate(
-      moment(selectedDate).subtract(1, "day").format("YYYY-MM-DD")
+      moment.utc(selectedDate).subtract(1, "day").format("YYYY-MM-DD")
     );
   };
 
@@ -42,16 +44,22 @@ export const App = () => {
     ipcRenderer
       .invoke("query-ethi-db", selectedDate)
       .then((results: EthiDbResult[]) => {
-        const filteredResults = results.filter(
-          (row) =>
-            (row.title ? row.title.trim() : "") !== "" &&
-            (row.url ? row.url.trim() : "") !== "" &&
-            row.url !== "chrome://newtab/" &&
-            row.url !==
-              "chrome-extension://chphlpgkkbolifaimnlloiipkdnihall/onetab.html" &&
-            row.url !==
-              "chrome-extension://pfglnpdpgmecffbejlfgpnebopinlclj/html/options.html"
-        );
+        const filteredResults = results
+          .filter(
+            (row) =>
+              (row.title ? row.title.trim() : "") !== "" &&
+              (row.url ? row.url.trim() : "") !== "" &&
+              row.url !== "chrome://newtab/" &&
+              row.url !==
+                "chrome-extension://chphlpgkkbolifaimnlloiipkdnihall/onetab.html" &&
+              row.url !==
+                "chrome-extension://pfglnpdpgmecffbejlfgpnebopinlclj/html/options.html"
+          )
+          .map((row) => ({
+            ...row,
+            start: moment.utc(row.start).local().format("YYYY-MM-DD HH:mm:ss"),
+            end: moment.utc(row.end).local().format("YYYY-MM-DD HH:mm:ss"),
+          }));
 
         setEthiData(filteredResults);
 
@@ -133,24 +141,26 @@ export const App = () => {
                           ))}
                         </div>
                       </Tooltip.Trigger>
-                      <Tooltip.Portal>
-                        <Tooltip.Content
-                          className={`p-4 text-xs overflow-auto max-h-96 ${
-                            theme === "dark"
-                              ? "bg-dark-bg-secondary text-dark-text-secondary"
-                              : "bg-white text-black"
-                          }`}
-                          sideOffset={5}
-                        >
-                          <ol>
-                            {dataInThisSlot.map((data) => (
-                              <li
-                                key={data.id}
-                              >{`${data.title} - ${data.url}`}</li>
-                            ))}
-                          </ol>
-                        </Tooltip.Content>
-                      </Tooltip.Portal>
+                      {dataInThisSlot.length !== 0 && (
+                        <Tooltip.Portal>
+                          <Tooltip.Content
+                            className={`p-4 text-xs overflow-auto max-h-96 ${
+                              theme === "dark"
+                                ? "bg-dark-bg-secondary text-dark-text-secondary"
+                                : "bg-white text-black"
+                            }`}
+                            sideOffset={5}
+                          >
+                            <ol>
+                              {dataInThisSlot.map((data) => (
+                                <li
+                                  key={data.id}
+                                >{`${data.title} - ${data.url}`}</li>
+                              ))}
+                            </ol>
+                          </Tooltip.Content>
+                        </Tooltip.Portal>
+                      )}
                     </Tooltip.Root>
                   </Tooltip.Provider>
                 );

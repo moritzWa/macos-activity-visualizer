@@ -21,7 +21,6 @@ function createWindow() {
 }
 
 app.whenReady().then(() => {
-  console.log("App is ready, calling createWindow");
   createWindow();
 });
 
@@ -30,7 +29,6 @@ app.on("window-all-closed", () => {
 });
 
 app.on("activate", () => {
-  console.log("on activate, mainWindow:", mainWindow);
   if (mainWindow === null) createWindow();
 });
 
@@ -68,8 +66,17 @@ ipcMain.handle("query-ethi-db", async (event, selectedDate) => {
 
   const today = moment().startOf("day"); // Get today's date at midnight
   const queryDate = moment(selectedDate || today);
-  const startDate = queryDate.format("YYYY-MM-DD HH:mm:ss");
-  const endDate = queryDate.endOf("day").format("YYYY-MM-DD HH:mm:ss");
+  const utcOffset = moment().utcOffset() / 60; // Get the UTC offset in hours
+  const startDate = queryDate
+    .startOf("day")
+    .add(utcOffset, "hours")
+    .utc()
+    .format("YYYY-MM-DD HH:mm:ss");
+  const endDate = queryDate
+    .endOf("day")
+    .add(utcOffset, "hours")
+    .utc()
+    .format("YYYY-MM-DD HH:mm:ss");
 
   // Build the parameterized SQL query for filtering by date range
   const query = `SELECT * FROM Activities WHERE start >= ? AND end <= ?`;
