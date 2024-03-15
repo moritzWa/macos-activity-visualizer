@@ -48,7 +48,7 @@ export const App = () => {
           .filter(
             (row) =>
               (row.title ? row.title.trim() : "") !== "" &&
-              (row.url ? row.url.trim() : "") !== "" &&
+              // (row.url ? row.url.trim() : "") !== "" &&
               row.url !== "chrome://newtab/" &&
               row.url !==
                 "chrome-extension://chphlpgkkbolifaimnlloiipkdnihall/onetab.html" &&
@@ -153,9 +153,9 @@ export const App = () => {
                           >
                             <ol>
                               {dataInThisSlot.map((data) => (
-                                <li
-                                  key={data.id}
-                                >{`${data.title} - ${data.url}`}</li>
+                                <li key={data.id}>{`${moment(data.start).format(
+                                  "HH:mm"
+                                )}: ${data.title} - ${data.url}`}</li>
                               ))}
                             </ol>
                           </Tooltip.Content>

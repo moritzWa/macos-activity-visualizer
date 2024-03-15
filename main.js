@@ -76,7 +76,7 @@ ipcMain.handle("query-ethi-db", async (event, selectedDate) => {
     .format("YYYY-MM-DD HH:mm:ss");
   const endDate = queryDate
     .endOf("day")
-    .add(7, "hours")
+    .add(12, "hours")
     .utc()
     .format("YYYY-MM-DD HH:mm:ss");
 
