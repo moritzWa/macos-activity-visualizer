@@ -66,15 +66,17 @@ ipcMain.handle("query-ethi-db", async (event, selectedDate) => {
 
   const today = moment().startOf("day"); // Get today's date at midnight
   const queryDate = moment(selectedDate || today);
-  const utcOffset = moment().utcOffset() / 60; // Get the UTC offset in hours
+
+  // TODO: try something like
+  // const utcOffset = moment().utcOffset() / 60; // Get the UTC offset in hours
+  // const endDate = queryDate.endOf('day').add(utcOffset, 'hours').utc().format('YYYY-MM-DD HH:mm:ss');
   const startDate = queryDate
     .startOf("day")
-    .add(utcOffset, "hours")
     .utc()
     .format("YYYY-MM-DD HH:mm:ss");
   const endDate = queryDate
     .endOf("day")
-    .add(utcOffset, "hours")
+    .add(7, "hours")
     .utc()
     .format("YYYY-MM-DD HH:mm:ss");
 
